@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -38,9 +39,9 @@ namespace AddWebApiCookieAuth.Controllers
             var identityUser = new IdentityUser()
             {
                 UserName = userDetails.UserName,
-                Email = userDetails.Email
+                Email = userDetails.Email,               
             };
-
+            
             var result = await userManager.CreateAsync(identityUser, userDetails.Password);
 
             if (!result.Succeeded)
@@ -89,7 +90,8 @@ namespace AddWebApiCookieAuth.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, identityUser.Email),
-                new Claim(ClaimTypes.Name, identityUser.UserName)
+                new Claim(ClaimTypes.Name, identityUser.UserName),
+                new Claim(ClaimTypes.DateOfBirth, credentials.DateOfBirth.ToString(), null, issuer: "http://contoso.com")
             };
 
             var claimsIdentity = new ClaimsIdentity(

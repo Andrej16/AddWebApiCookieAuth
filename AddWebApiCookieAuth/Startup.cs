@@ -1,5 +1,8 @@
+using AddWebApiCookieAuth.Auth;
 using AddWebApiCookieAuth.Context;
+using AddWebApiCookieAuth.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -34,8 +37,15 @@ namespace AddWebApiCookieAuth
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
                     options.SlidingExpiration = true;
-                    options.ExpireTimeSpan = new TimeSpan(0, 1, 0);
+                    options.ExpireTimeSpan = new TimeSpan(1, 1, 0);
                 });
+
+            services.AddAuthorization(option =>
+            {
+                option.AddPolicy("AtLeast21",
+                    policy => policy.Requirements.Add(new MinimumAgeRequirement(21)));
+            });
+            services.AddSingleton<IAuthorizationHandler, MinimumAgeHandler>();
 
             services.AddControllers();
         }
